@@ -214,7 +214,7 @@ def generate_calc_job_node(fixture_localhost):
 
         if test_name is not None:
             basepath = os.path.dirname(os.path.abspath(__file__))
-            filename = os.path.join(entry_point_name[len('quantumespresso.'):], test_name)
+            filename = os.path.join(entry_point_name[len('dakota.'):], test_name)
             filepath_folder = os.path.join(basepath, 'parsers', 'fixtures', filename)
             filepath_input = os.path.join(filepath_folder, 'aiida.in')
 
@@ -232,7 +232,7 @@ def generate_calc_job_node(fixture_localhost):
 
         if filepath_folder:
             from qe_tools.exceptions import ParsingError
-            from aiida_quantumespresso.tools.pwinputparser import PwInputFile
+            from aiida_dakota.tools.pwinputparser import PwInputFile
             try:
                 with open(filepath_input, 'r') as input_file:
                     parsed_input = PwInputFile(input_file.read())
@@ -430,7 +430,7 @@ def generate_workchain():
 @pytest.fixture
 def generate_force_constants_data(filepath_tests):
     """Generate a ``ForceConstantsData`` node."""
-    from aiida_quantumespresso.data.force_constants import ForceConstantsData
+    from aiida_dakota.data.force_constants import ForceConstantsData
     filepath = os.path.join(filepath_tests, 'calculations', 'fixtures', 'matdyn', 'default', 'force_constants.dat')
     return ForceConstantsData(filepath)
 
@@ -441,10 +441,10 @@ def generate_inputs_matdyn(fixture_code, generate_kpoints_mesh, generate_force_c
 
     def _generate_inputs_matdyn():
         """Generate default inputs for a `MatdynCalculation."""
-        from aiida_quantumespresso.utils.resources import get_default_options
+        from aiida_dakota.utils.resources import get_default_options
 
         inputs = {
-            'code': fixture_code('quantumespresso.matdyn'),
+            'code': fixture_code('dakota.matdyn'),
             'force_constants': generate_force_constants_data,
             'kpoints': generate_kpoints_mesh(2),
             'metadata': {
@@ -463,11 +463,11 @@ def generate_inputs_q2r(fixture_sandbox, fixture_localhost, fixture_code, genera
 
     def _generate_inputs_q2r():
         """Generate default inputs for a `Q2rCalculation."""
-        from aiida_quantumespresso.utils.resources import get_default_options
+        from aiida_dakota.utils.resources import get_default_options
 
         inputs = {
-            'code': fixture_code('quantumespresso.q2r'),
-            'parent_folder': generate_remote_data(fixture_localhost, fixture_sandbox.abspath, 'quantumespresso.ph'),
+            'code': fixture_code('dakota.q2r'),
+            'parent_folder': generate_remote_data(fixture_localhost, fixture_sandbox.abspath, 'dakota.ph'),
             'metadata': {
                 'options': get_default_options()
             }
@@ -485,11 +485,11 @@ def generate_inputs_ph(fixture_sandbox, fixture_localhost, fixture_code, generat
     def _generate_inputs_ph():
         """Generate default inputs for a `PhCalculation."""
         from aiida.orm import Dict
-        from aiida_quantumespresso.utils.resources import get_default_options
+        from aiida_dakota.utils.resources import get_default_options
 
         inputs = {
-            'code': fixture_code('quantumespresso.matdyn'),
-            'parent_folder': generate_remote_data(fixture_localhost, fixture_sandbox.abspath, 'quantumespresso.pw'),
+            'code': fixture_code('dakota.matdyn'),
+            'parent_folder': generate_remote_data(fixture_localhost, fixture_sandbox.abspath, 'dakota.pw'),
             'qpoints': generate_kpoints_mesh(2),
             'parameters': Dict(dict={'INPUTPH': {}}),
             'metadata': {
@@ -509,10 +509,10 @@ def generate_inputs_pw(fixture_code, generate_structure, generate_kpoints_mesh, 
     def _generate_inputs_pw():
         """Generate default inputs for a `PwCalculation."""
         from aiida.orm import Dict
-        from aiida_quantumespresso.utils.resources import get_default_options
+        from aiida_dakota.utils.resources import get_default_options
 
         inputs = {
-            'code': fixture_code('quantumespresso.pw'),
+            'code': fixture_code('dakota.pw'),
             'structure': generate_structure(),
             'kpoints': generate_kpoints_mesh(2),
             'parameters': Dict(dict={
@@ -544,10 +544,10 @@ def generate_inputs_cp(fixture_code, generate_structure, generate_upf_data):
     def _generate_inputs_cp(autopilot=False):
         """Generate default inputs for a CpCalculation."""
         from aiida.orm import Dict
-        from aiida_quantumespresso.utils.resources import get_default_options
+        from aiida_dakota.utils.resources import get_default_options
 
         inputs = {
-            'code': fixture_code('quantumespresso.cp'),
+            'code': fixture_code('dakota.cp'),
             'structure': generate_structure(),
             'parameters': Dict(dict={
                 'CONTROL': {
@@ -593,7 +593,7 @@ def generate_workchain_pw(generate_workchain, generate_inputs_pw, generate_calc_
         from plumpy import ProcessState
         from aiida.orm import Dict
 
-        entry_point = 'quantumespresso.pw.base'
+        entry_point = 'dakota.pw.base'
 
         if inputs is None:
             pw_inputs = generate_inputs_pw()
@@ -625,7 +625,7 @@ def generate_workchain_ph(generate_workchain, generate_inputs_ph, generate_calc_
     def _generate_workchain_ph(exit_code=None, inputs=None, return_inputs=False):
         from plumpy import ProcessState
 
-        entry_point = 'quantumespresso.ph.base'
+        entry_point = 'dakota.ph.base'
 
         if inputs is None:
             inputs = {'ph': generate_inputs_ph()}
@@ -654,9 +654,9 @@ def generate_workchain_pdos(generate_workchain, generate_inputs_pw, fixture_code
 
     def _generate_workchain_pdos():
         from aiida.orm import Dict, Bool
-        from aiida_quantumespresso.utils.resources import get_default_options
+        from aiida_dakota.utils.resources import get_default_options
 
-        entry_point = 'quantumespresso.pdos'
+        entry_point = 'dakota.pdos'
 
         scf_pw_inputs = generate_inputs_pw()
         kpoints = scf_pw_inputs.pop('kpoints')
@@ -681,14 +681,14 @@ def generate_workchain_pdos(generate_workchain, generate_inputs_pw, fixture_code
         }
         projwfc_params = {'PROJWFC': {'Emin': -10, 'Emax': 10, 'DeltaE': 0.01, 'ngauss': 0, 'degauss': 0.01}}
         dos = {
-            'code': fixture_code('quantumespresso.dos'),
+            'code': fixture_code('dakota.dos'),
             'parameters': Dict(dict=dos_params),
             'metadata': {
                 'options': get_default_options()
             }
         }
         projwfc = {
-            'code': fixture_code('quantumespresso.projwfc'),
+            'code': fixture_code('dakota.projwfc'),
             'parameters': Dict(dict=projwfc_params),
             'metadata': {
                 'options': get_default_options()

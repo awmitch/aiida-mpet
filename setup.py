@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Setup for the `aiida-quantumespresso` plugin which provides an interface to Quantum ESPRESSO for `aiida-core`."""
+"""Setup for the `aiida-dakota` plugin which provides an interface to Dakota for `aiida-core`."""
 try:
     import fastentrypoints  # pylint: disable=unused-import
 except ImportError:

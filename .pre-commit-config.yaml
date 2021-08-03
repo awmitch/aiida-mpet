@@ -28,8 +28,7 @@ repos:
     -   id: pydocstyle
         exclude: &exclude_files >
             (?x)^(
-                aiida_quantumespresso/calculations/pwimmigrant.*|
-                aiida_quantumespresso/parsers/.*|
+                aiida_dakota/parsers/.*|
                 docs/.*|
                 tests/.*(?<!\.py)$
             )$
@@ -61,7 +60,7 @@ repos:
         files: >-
             (?x)^(
                 setup.json|
-                aiida_quantumespresso/__init__.py|
+                aiida_dakota/__init__.py|
                 ./utils/validate_version_number.py|
             )$
         pass_filenames: false
