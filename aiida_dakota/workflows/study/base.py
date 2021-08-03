@@ -54,19 +54,6 @@ class StudyBaseWorkChain(ProtocolMixin, BaseRestartWorkChain):
         super().define(spec)
         spec.expose_inputs(StudyCalculation, namespace='study', exclude=('kpoints',))
         spec.input('study.metadata.options.resources', valid_type=dict, required=False)
-        spec.input('kpoints', valid_type=orm.KpointsData, required=False,
-            help='An explicit k-points list or mesh. Either this or `kpoints_distance` has to be provided.')
-        spec.input('kpoints_distance', valid_type=orm.Float, required=False,
-            help='The minimum desired distance in 1/Å between k-points in reciprocal space. The explicit k-points will '
-                 'be generated automatically by a calculation function based on the input structure.')
-        spec.input('kpoints_force_parity', valid_type=orm.Bool, required=False,
-            help='Optional input when constructing the k-points based on a desired `kpoints_distance`. Setting this to '
-                 '`True` will force the k-point mesh to have an even number of points along each lattice vector except '
-                 'for any non-periodic directions.')
-        spec.input('pseudo_family', valid_type=orm.Str, required=False, validator=validate_pseudo_family,
-            help='[Deprecated: use `study.pseudos` instead] An alternative to specifying the pseudo potentials manually in'
-                 ' `pseudos`: one can specify the name of an existing pseudo potential family and the work chain will '
-                 'generate the pseudos automatically based on the input structure.')
         spec.input('automatic_parallelization', valid_type=orm.Dict, required=False,
             help='When defined, the work chain will first launch an initialization calculation to determine the '
                  'dimensions of the problem, and based on this it will try to set optimal parallelization flags.')
@@ -74,8 +61,6 @@ class StudyBaseWorkChain(ProtocolMixin, BaseRestartWorkChain):
         spec.outline(
             cls.setup,
             cls.validate_parameters,
-            cls.validate_kpoints,
-            cls.validate_pseudos,
             if_(cls.should_run_init)(
                 cls.validate_init_inputs,
                 cls.run_init,
@@ -93,10 +78,6 @@ class StudyBaseWorkChain(ProtocolMixin, BaseRestartWorkChain):
         spec.output('automatic_parallelization', valid_type=orm.Dict, required=False,
             help='The results of the automatic parallelization analysis if performed.')
 
-        spec.exit_code(201, 'ERROR_INVALID_INPUT_PSEUDO_POTENTIALS',
-            message='The explicit `pseudos` or `pseudo_family` could not be used to get the necessary pseudos.')
-        spec.exit_code(202, 'ERROR_INVALID_INPUT_KPOINTS',
-            message='Neither the `kpoints` nor the `kpoints_distance` input was specified.')
         spec.exit_code(203, 'ERROR_INVALID_INPUT_RESOURCES',
             message='Neither the `options` nor `automatic_parallelization` input was specified. '
                     'This exit status has been deprecated as the check it corresponded to was incorrect.')
@@ -113,11 +94,6 @@ class StudyBaseWorkChain(ProtocolMixin, BaseRestartWorkChain):
             message='The calculation failed with a known unrecoverable error.')
         spec.exit_code(320, 'ERROR_INITIALIZATION_CALCULATION_FAILED',
             message='The initialization calculation failed.')
-        spec.exit_code(501, 'ERROR_IONIC_CONVERGENCE_REACHED_EXCEPT_IN_FINAL_SCF',
-            message='Then ionic minimization cycle converged but the thresholds are exceeded in the final SCF.')
-        spec.exit_code(710, 'WARNING_ELECTRONIC_CONVERGENCE_NOT_REACHED',
-            message='The electronic minimization cycle did not reach self-consistency, but `scf_must_converge` '
-                    'is `False` and/or `electron_maxstep` is 0.')
         # yapf: enable
 
     @classmethod
