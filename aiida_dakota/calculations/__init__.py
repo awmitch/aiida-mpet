@@ -13,7 +13,6 @@ from aiida.common import datastructures, exceptions
 from aiida.common.lang import classproperty
 from aiida.common.warnings import AiidaDeprecationWarning
 from aiida.plugins import DataFactory
-from dakota_tools.converters import get_parameters_from_cell
 
 from aiida_dakota.utils.convert import convert_input_to_namelist_entry
 from .base import CalcJob
@@ -209,17 +208,6 @@ class BaseStudyInputGenerator(CalcJob):
                     handle.write(convert_input_to_namelist_entry(key, value, mapping=mapping_species))
                 handle.write('/\n')
 
-        # Check for the deprecated 'ALSO_BANDS' setting and if present fire a deprecation log message
-        also_bands = settings.pop('ALSO_BANDS', None)
-        if also_bands:
-            self.node.logger.warning(
-                "The '{}' setting is deprecated as bands are now parsed by default. "
-                "If you do not want the bands to be parsed set the '{}' to True {}. "
-                'Note that the eigenvalue.xml files are also no longer stored in the repository'.format(
-                    'also_bands', 'no_bands', type(self)
-                )
-            )
-
         calcinfo = datastructures.CalcInfo()
 
         calcinfo.uuid = str(self.uuid)
@@ -247,14 +235,6 @@ class BaseStudyInputGenerator(CalcJob):
         calcinfo.retrieve_list.extend(self.xml_filepaths)
         calcinfo.retrieve_list += settings.pop('ADDITIONAL_RETRIEVE_LIST', [])
         calcinfo.retrieve_list += self._internal_retrieve_list
-
-        # Retrieve the k-point directories with the xml files to the temporary folder
-        # to parse the band eigenvalues and occupations but not to have to save the raw files
-        # if and only if the 'no_bands' key was not set to true in the settings
-        no_bands = settings.pop('NO_BANDS', False)
-        if no_bands is False:
-            xmlpaths = os.path.join(self._OUTPUT_SUBFOLDER, self._PREFIX + '.save', 'K*[0-9]', 'eigenval*.xml')
-            calcinfo.retrieve_temporary_list = [[xmlpaths, '.', 2]]
 
         # We might still have parser options in the settings dictionary: pop them.
         _pop_parser_options(self, settings)
