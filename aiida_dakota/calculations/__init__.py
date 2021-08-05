@@ -326,7 +326,7 @@ class BaseStudyInputGenerator(CalcJob):
 
     @classmethod
     def _generate_STUDYinputdata(cls, parameters, settings, pseudos, structure, kpoints=None, use_fractional=False):  # pylint: disable=invalid-name
-        """Create the input file in string format for a dakota or cp.x calculation for the given inputs."""
+        """Create the input file in string format for a dakota calculation for the given inputs."""
         # pylint: disable=too-many-branches,too-many-statements
         from aiida.common.utils import get_unique_filename
         import re
