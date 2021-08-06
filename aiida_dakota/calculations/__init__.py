@@ -69,22 +69,24 @@ class BaseStudyInputGenerator(CalcJob):
     _default_symlink_usage = True
 
     # In restarts, it will copy from the parent the following
-    _restart_copy_from = os.path.join(_OUTPUT_SUBFOLDER, '*')
+    #_restart_copy_from = os.path.join(_OUTPUT_SUBFOLDER, '*')
 
     # In restarts, it will copy the previous folder in the following one
-    _restart_copy_to = _OUTPUT_SUBFOLDER
+    #_restart_copy_to = _OUTPUT_SUBFOLDER
 
     # Default verbosity; change in subclasses
     _default_verbosity = 'high'
 
+    """
     @classproperty
     def xml_filenames(cls):
-        """Return a list of XML output filenames that can be written by a calculation.
+        #Return a list of XML output filenames that can be written by a calculation.
 
-        Note that this includes all potential filenames across all known versions of Dakota
-        """
+        #Note that this includes all potential filenames across all known versions of Dakota
+        
         # pylint: disable=no-self-argument
         return [cls._DATAFILE_XML_POST_6_2, cls._DATAFILE_XML_PRE_6_2]
+    """
 
     @abc.abstractmethod
     @classproperty
@@ -150,7 +152,7 @@ class BaseStudyInputGenerator(CalcJob):
         remote_symlink_list = []
 
         # Create the subfolder for the output data (sometimes Dakota codes crash if the folder does not exist)
-        folder.get_subfolder(self._OUTPUT_SUBFOLDER, create=True)
+        #folder.get_subfolder(self._OUTPUT_SUBFOLDER, create=True)
 
         arguments = [
             self.inputs.parameters,
@@ -232,7 +234,7 @@ class BaseStudyInputGenerator(CalcJob):
         # Retrieve by default the output file and the xml file
         calcinfo.retrieve_list = []
         calcinfo.retrieve_list.append(self.metadata.options.output_filename)
-        calcinfo.retrieve_list.extend(self.xml_filepaths)
+        #calcinfo.retrieve_list.extend(self.xml_filepaths)
         calcinfo.retrieve_list += settings.pop('ADDITIONAL_RETRIEVE_LIST', [])
         calcinfo.retrieve_list += self._internal_retrieve_list
 
@@ -305,7 +307,7 @@ class BaseStudyInputGenerator(CalcJob):
         return ''
 
     @classmethod
-    def _generate_STUDYinputdata(cls, parameters, settings, pseudos, structure, kpoints=None, use_fractional=False):  # pylint: disable=invalid-name
+    def _generate_STUDYinputdata(cls, parameters, settings, use_fractional=False):  # pylint: disable=invalid-name
         """Create the input file in string format for a dakota calculation for the given inputs."""
         # pylint: disable=too-many-branches,too-many-statements
         from aiida.common.utils import get_unique_filename
@@ -344,7 +346,7 @@ class BaseStudyInputGenerator(CalcJob):
         #input_params.setdefault('CONTROL', {})
         #input_params['CONTROL']['pseudo_dir'] = cls._PSEUDO_SUBFOLDER
 
-
+        
         # ============ I prepare the input site data =============
 
         # =================== NAMELISTS AND CARDS ========================
@@ -356,6 +358,7 @@ class BaseStudyInputGenerator(CalcJob):
                     'node, must be a list of strings'
                 )
         except KeyError:  # list of namelists not specified; do automatic detection
+            """
             try:
                 control_nl = input_params['CONTROL']
                 calculation_type = control_nl['calculation']
@@ -366,7 +369,8 @@ class BaseStudyInputGenerator(CalcJob):
                     'of namelists. Otherwise, specify the list of namelists '
                     "using the NAMELISTS key inside the 'settings' input node."
                 ) from exception
-
+            """
+            calculation_type = 'default'
             try:
                 namelists_toprint = cls._automatic_namelists[calculation_type]
             except KeyError as exception:
@@ -379,7 +383,7 @@ class BaseStudyInputGenerator(CalcJob):
 
         inputfile = ''
         for namelist_name in namelists_toprint:
-            inputfile += f'&{namelist_name}\n'
+            inputfile += f'{namelist_name}\n'
             # namelist content; set to {} if not present, so that we leave an empty namelist
             namelist = input_params.pop(namelist_name, {})
             for key, value in sorted(namelist.items()):

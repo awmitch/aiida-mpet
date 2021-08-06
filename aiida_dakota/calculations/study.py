@@ -13,7 +13,7 @@ class StudyCalculation(BaseStudyInputGenerator):
     """`CalcJob` implementation for the dakota code of Dakota."""
 
     _automatic_namelists = {
-        'default': ['ENVIRONMENT', 'METHOD', 'MODEL', 'VARIABLES', 'INTERFACE', 'RESPONSES']
+        'default': ['environment', 'method', 'model', 'variables', 'interfaces', 'responses']
     }
 
     # Keywords that cannot be set by the user but will be set by the plugin
@@ -25,10 +25,10 @@ class StudyCalculation(BaseStudyInputGenerator):
     _default_symlink_usage = False
 
     _ENABLED_PARALLELIZATION_FLAGS = ('npool', 'nband', 'ntg', 'ndiag')
-
+    """
     @classproperty
     def xml_filepaths(cls):
-        """Return a list of XML output filepaths relative to the remote working directory that should be retrieved."""
+        # Return a list of XML output filepaths relative to the remote working directory that should be retrieved.
         # pylint: disable=no-self-argument,not-an-iterable
         filepaths = []
 
@@ -37,19 +37,21 @@ class StudyCalculation(BaseStudyInputGenerator):
             filepaths.append(filepath)
 
         return filepaths
-
+    """
     @classmethod
     def define(cls, spec):
         """Define the process specification."""
         # yapf: disable
         super().define(spec)
-        spec.input('metadata.options.parser_name', valid_type=str, default='dakota.study')
+        #('metadata.options.parser_name', valid_type=str, default='dakota.study')
         spec.input('metadata.options.without_xml', valid_type=bool, required=False, help='If set to `True` the parser '
             'will not fail if the XML file is missing in the retrieved folder.')
+
+
         spec.output('output_parameters', valid_type=orm.Dict,
             help='The `output_parameters` output node of the successful calculation.')
         spec.default_output_node = 'output_parameters'
-
+        """
         # Unrecoverable errors: required retrieved files could not be read, parsed or are otherwise incomplete
         spec.exit_code(301, 'ERROR_NO_RETRIEVED_TEMPORARY_FOLDER',
             message='The retrieved temporary folder could not be accessed.')
@@ -78,7 +80,7 @@ class StudyCalculation(BaseStudyInputGenerator):
                     'scheduler before the files were safely written to disk for a potential restart.')
         spec.exit_code(350, 'ERROR_UNEXPECTED_PARSER_EXCEPTION',
             message='The parser raised an unexpected exception.')
-
+        """
         # Significant errors but calculation can be used to restart
         #spec.exit_code(400, 'ERROR_OUT_OF_WALLTIME',
         #    message='The calculation stopped prematurely because it ran out of walltime.')
