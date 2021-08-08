@@ -201,8 +201,8 @@ class BaseStudyInputGenerator(CalcJob):
                 settings['CMDLINE'] = ['-environ']
             # To create a mapping from the species to an incremental fortran 1-based index
             # we use the alphabetical order as in the inputdata generation
-            kind_names = sorted([kind.name for kind in self.inputs.structure.kinds])
-            mapping_species = {kind_name: (index + 1) for index, kind_name in enumerate(kind_names)}
+            #kind_names = sorted([kind.name for kind in self.inputs.structure.kinds])
+            #mapping_species = {kind_name: (index + 1) for index, kind_name in enumerate(kind_names)}
 
             with folder.open(self._ENVIRON_INPUT_FILE_NAME, 'w') as handle:
                 handle.write('&ENVIRON\n')
@@ -387,6 +387,7 @@ class BaseStudyInputGenerator(CalcJob):
             # namelist content; set to {} if not present, so that we leave an empty namelist
             namelist = input_params.pop(namelist_name, {})
             for key, value in sorted(namelist.items()):
+                #inputfile += convert_input_to_namelist_entry(key, value, mapping=mapping_species)
                 inputfile += convert_input_to_namelist_entry(key, value, mapping=mapping_species)
             inputfile += '/\n'
 
