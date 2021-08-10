@@ -151,11 +151,11 @@ def convert_input_to_namelist_entry(key, val, mapping=None):
 
         This will map every occurrence of 'Fe' and 'O' in the values to the corresponding integer.
     """
+
     # pylint: disable=too-many-branches,too-many-nested-blocks,no-else-return
     # I don't try to do iterator=iter(val) and catch TypeError because it would also match strings
     # I check first the dictionary, because it would also match hasattr(__iter__)
     if isinstance(val, dict):
-
         if mapping is None:
             raise ValueError("If 'val' is a dictionary, you must provide also the 'mapping' parameter")
 
@@ -169,20 +169,22 @@ def convert_input_to_namelist_entry(key, val, mapping=None):
                 idx = mapping[elemk]
             except KeyError as exception:
                 raise ValueError(f"Unable to find the key '{elemk}' in the mapping dictionary") from exception
-
-            list_of_strings.append((idx, f'  {key}({idx}) = {conv_to_fortran(itemval)}\n'))
+            if key == 'keywords':
+                list_of_strings.append((idx, f'  {itemval}\n'))
+            else:
+                list_of_strings.append((idx, f'  {key}= {conv_to_fortran(itemval)}\n'))
 
         # I first have to resort, then to remove the index from the first column, finally to join the strings
         list_of_strings = list(zip(*sorted(list_of_strings)))[1]
         return ''.join(list_of_strings)
-
     # A list/tuple of values
     elif isinstance(val, (list, tuple)):
 
         list_of_strings = []
-
+        if key != 'keywords':
+            list_of_strings.append(f'  {key} = ')
         for idx, itemval in enumerate(val):
-
+        
             if isinstance(itemval, (list, tuple)):
 
                 values = []
@@ -210,10 +212,19 @@ def convert_input_to_namelist_entry(key, val, mapping=None):
             else:
                 idx_string = f'{idx + 1}'
 
-            list_of_strings.append(f'  {key}({idx_string}) = {conv_to_fortran(itemval)}\n')
-
+            #list_of_strings.append(f'  {key}({idx_string}) = {conv_to_fortran(itemval)}\n')
+            if key != 'keywords':
+                list_of_strings.append(f' {itemval}')
+            else:
+                list_of_strings.append((f'  {itemval}\n'))
+                
+        if key != 'keywords':
+            list_of_strings.append((f'\n'))
         return ''.join(list_of_strings)
 
     # Single value
+    elif isinstance(val, str):
+        return f'  {key} = \'{val}\'\n'
     else:
-        return f'  {key} = {conv_to_fortran(val)}\n'
+        #return f'  {key} = {conv_to_fortran(val)}\n'
+        return f'  {key} = {val}\n'

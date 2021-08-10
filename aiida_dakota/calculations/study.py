@@ -13,7 +13,7 @@ class StudyCalculation(BaseStudyInputGenerator):
     """`CalcJob` implementation for the dakota code of Dakota."""
 
     _automatic_namelists = {
-        'default': ['environment', 'method', 'model', 'variables', 'interfaces', 'responses']
+        'default': ['environment', 'method', 'model', 'variables', 'interface', 'responses']
     }
 
     # Keywords that cannot be set by the user but will be set by the plugin

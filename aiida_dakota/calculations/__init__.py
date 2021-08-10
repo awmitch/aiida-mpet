@@ -143,7 +143,8 @@ class BaseStudyInputGenerator(CalcJob):
         """
         # pylint: disable=too-many-branches,too-many-statements
         if 'settings' in self.inputs:
-            settings = _uppercase_dict(self.inputs.settings.get_dict(), dict_name='settings')
+            #settings = _uppercase_dict(self.inputs.settings.get_dict(), dict_name='settings')
+            settings =self.inputs.settings.get_dict()
         else:
             settings = {}
 
@@ -188,27 +189,7 @@ class BaseStudyInputGenerator(CalcJob):
             with folder.open(f'{self._PREFIX}.EXIT', 'w') as handle:
                 handle.write('\n')
 
-        # Check if specific inputs for the ENVIRON module where specified
-        environ_namelist = settings.pop('ENVIRON', None)
-        if environ_namelist is not None:
-            if not isinstance(environ_namelist, dict):
-                raise exceptions.InputValidationError('ENVIRON namelist should be specified as a dictionary')
-            # We first add the environ flag to the command-line options (if not already present)
-            try:
-                if '-environ' not in settings['CMDLINE']:
-                    settings['CMDLINE'].append('-environ')
-            except KeyError:
-                settings['CMDLINE'] = ['-environ']
-            # To create a mapping from the species to an incremental fortran 1-based index
-            # we use the alphabetical order as in the inputdata generation
-            #kind_names = sorted([kind.name for kind in self.inputs.structure.kinds])
-            #mapping_species = {kind_name: (index + 1) for index, kind_name in enumerate(kind_names)}
 
-            with folder.open(self._ENVIRON_INPUT_FILE_NAME, 'w') as handle:
-                handle.write('&ENVIRON\n')
-                for key, value in sorted(environ_namelist.items()):
-                    handle.write(convert_input_to_namelist_entry(key, value, mapping=mapping_species))
-                handle.write('/\n')
 
         calcinfo = datastructures.CalcInfo()
 
@@ -317,8 +298,9 @@ class BaseStudyInputGenerator(CalcJob):
         # I put the first-level keys as uppercase (i.e., namelist and card names)
         # and the second-level keys as lowercase
         # (deeper levels are unchanged)
-        input_params = _uppercase_dict(parameters.get_dict(), dict_name='parameters')
-        input_params = {k: _lowercase_dict(v, dict_name=k) for k, v in input_params.items()}
+        #input_params = _uppercase_dict(parameters.get_dict(), dict_name='parameters')
+        input_params = parameters.get_dict()
+        #input_params = {k: _lowercase_dict(v, dict_name=k) for k, v in input_params.items()}
 
         # I remove unwanted elements (for the moment, instead, I stop; to change when we setup a reasonable logging)
         for blocked in cls._blocked_keywords:
@@ -387,9 +369,8 @@ class BaseStudyInputGenerator(CalcJob):
             # namelist content; set to {} if not present, so that we leave an empty namelist
             namelist = input_params.pop(namelist_name, {})
             for key, value in sorted(namelist.items()):
-                #inputfile += convert_input_to_namelist_entry(key, value, mapping=mapping_species)
-                inputfile += convert_input_to_namelist_entry(key, value, mapping=mapping_species)
-            inputfile += '/\n'
+                inputfile += convert_input_to_namelist_entry(key, value)
+            inputfile += '\n'
 
 
         # Generate additional cards bases on input parameters and settings that are subclass specific
