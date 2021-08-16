@@ -1,6 +1,9 @@
 from aiida import orm, engine
 from aiida.common.exceptions import NotExistent
 
+PwCalculation = CalculationFactory('quantumespresso.pw')
+driver_builder = PwCalculation.get_builder()
+
 parameters = {
 	'environment':{
 		'keywords':["tabular_data"],
@@ -39,14 +42,6 @@ parameters = {
 	},
 }
 
-								
-	  
-	parameters_file = 'params.in'
-	results_file = 'results.out'
-	file_tag
-	file_save
-
-
 # Setting up inputs
 computer = orm.load_computer('laptop')
 try:
@@ -54,10 +49,9 @@ try:
 except NotExistent:
     # Setting up code via python API (or use "verdi code setup")
     code = orm.Code(label='laptop', remote_computer_exec=[computer, '/bin/bash'], input_plugin_name='dakota.study')
-
 builder = code.get_builder()
 builder.parameters = Dict(dict=parameters)
-	
+builder.driver_builder = driver_builder
 builder.metadata.options.withmpi = False
 builder.metadata.options.resources = {
     'num_machines': 1,
