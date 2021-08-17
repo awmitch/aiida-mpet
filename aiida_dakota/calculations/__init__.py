@@ -172,6 +172,7 @@ class BaseStudyInputGenerator(CalcJob):
         with folder.open(self.metadata.options.input_filename, 'w') as handle:
             handle.write(input_filecontent)
 
+        # TODO: fix janky
         with folder.open(self.metadata.options.driver_filename, 'w') as handle:
             driver_content = self.inputs.driver.get_content()
             driver_split = driver_content.splitlines(True)
@@ -179,7 +180,8 @@ class BaseStudyInputGenerator(CalcJob):
             for count, line in enumerate(driver_split):
                 new_driver_content += line
                 if count == 3:
-                    new_driver_content += 'dprepro3 --left-delimiter="\'{" --right-delimiter="}\'" $1 template.in aiida.in\n'
+                    new_driver_content += 'mv template.in template_old.in\n'
+                    new_driver_content += 'dprepro3 --left-delimiter="\'{" --right-delimiter="}\'" $1 template_old.in template.in\n'
             handle.write(new_driver_content)
             
         # operations for restart
