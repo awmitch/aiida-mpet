@@ -214,7 +214,10 @@ def convert_input_to_namelist_entry(key, val, mapping=None):
 
             #list_of_strings.append(f'  {key}({idx_string}) = {conv_to_fortran(itemval)}\n')
             if key != 'keywords':
-                list_of_strings.append(f' {itemval}')
+                if isinstance(itemval,int):
+                    list_of_strings.append(f' {itemval}')
+                else:
+                    list_of_strings.append(f' \'{itemval}\'')
             else:
                 list_of_strings.append((f'  {itemval}\n'))
                 

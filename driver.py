@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 from aiida.engine import run_get_pk
+from aiida import load_profile
+from aiida.orm import load_node
 import dakota.interfacing as di
 
 
@@ -12,6 +14,8 @@ def pack_plugin_parameters(dakota_params, dakota_results):
     """Pack plugin_list input dictionary
     
     """
+    for key in dakota_params.items
+
     continuous_vars = [ dakota_params['degauss'] ]
 
     active_set_vector = 0

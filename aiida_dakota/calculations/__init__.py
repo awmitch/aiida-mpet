@@ -26,6 +26,9 @@ class BaseStudyInputGenerator(CalcJob):
     _DEFAULT_OUTPUT_FILE = 'aiida.out'
     _ENVIRON_INPUT_FILE_NAME = 'environ.in'
     _DRIVER_FILE = 'driver.py'
+    _PSEUDO_SUBFOLDER = './pseudo/'
+    _OUTPUT_SUBFOLDER = './out/'
+    _PREFIX = 'aiida'
 
     # A mapping {flag_name: help_string} of parallelization flags
     # possible in DAKOTA codes. The flags that are actually implemented in a
@@ -100,17 +103,13 @@ class BaseStudyInputGenerator(CalcJob):
         """Define the process specification."""
         # yapf: disable
         super().define(spec)
+        spec.input('driver', valid_type=orm.SinglefileData)
         spec.input('metadata.options.input_filename', valid_type=str, default=cls._DEFAULT_INPUT_FILE)
         spec.input('metadata.options.output_filename', valid_type=str, default=cls._DEFAULT_OUTPUT_FILE)
         spec.input('metadata.options.driver_filename', valid_type=str, default=cls._DRIVER_FILE)
         spec.input('metadata.options.withmpi', valid_type=bool, default=True)  # Override default withmpi=False
         spec.input('parameters', valid_type=orm.Dict,
             help='The input parameters that are to be used to construct the input file.')
-        spec.input('driver_builder', 
-            valid_type=ProcessBuilder,
-            help='The driver inputs that are to be used to construct the driver file.',
-            validator=cls._validate_driver_builder,
-            non_db=True)
         spec.input('settings', valid_type=orm.Dict, required=False,
             help='Optional parameters to affect the way the calculation job and the parsing are performed.')
         spec.input('parent_folder', valid_type=orm.RemoteData, required=False,
@@ -129,14 +128,6 @@ class BaseStudyInputGenerator(CalcJob):
             validator=cls._validate_parallelization
         )
 
-    @classmethod
-    def _validate_driver_builder(cls, value, port_namespace):  # pylint: disable=unused-argument
-        print(port_namespace)
-        print(type(value))
-        if not isinstance(value,ProcessBuilder):
-            return (
-                    f"driver_builder is of type: {type(value)}, "
-                )
     @classmethod
     def _validate_parallelization(cls, value, port_namespace):  # pylint: disable=unused-argument
         if value:
@@ -181,14 +172,16 @@ class BaseStudyInputGenerator(CalcJob):
         with folder.open(self.metadata.options.input_filename, 'w') as handle:
             handle.write(input_filecontent)
 
-        driver_arguments = [
-            self.inputs.driver_builder,
-        ]
-        driver_filecontent = self._generate_STUDYdriverdata(*driver_arguments)
-
         with folder.open(self.metadata.options.driver_filename, 'w') as handle:
-            handle.write(driver_filecontent)
-
+            driver_content = self.inputs.driver.get_content()
+            driver_split = driver_content.splitlines(True)
+            new_driver_content = ''
+            for count, line in enumerate(driver_split):
+                new_driver_content += line
+                if count == 3:
+                    new_driver_content += 'dprepro3 --left-delimiter="\'{" --right-delimiter="}\'" $1 template.in aiida.in\n'
+            handle.write(new_driver_content)
+            
         # operations for restart
         symlink = settings.pop('PARENT_FOLDER_SYMLINK', self._default_symlink_usage)  # a boolean
         if symlink:
@@ -311,24 +304,12 @@ class BaseStudyInputGenerator(CalcJob):
         # pylint: disable=unused-argument,invalid-name
         return ''
 
+
     @classmethod
-    def _generate_STUDYdriverdata(cls, driver_builder):  # pylint: disable=invalid-name
-        """Create the driver file in string format for a dakota calculation for the given driver inputs."""
+    def _generate_STUDYtemplatedata(cls, parameters, settings, use_fractional=False):  # pylint: disable=invalid-name
+        """Create the input file in string format for a dakota calculation for the given inputs."""
         # pylint: disable=too-many-branches,too-many-statements
-
-        driverfile = (
-            "#!/usr/bin/env python3\n"
-            "from aiida.engine import run_get_pk\n"
-            "import dakota.interfacing as di\n"
-            f"{driver_builder.process_class}"
-        )
-
-
-        return driverfile
-
  
-
-
 
     @classmethod
     def _generate_STUDYinputdata(cls, parameters, settings, use_fractional=False):  # pylint: disable=invalid-name
