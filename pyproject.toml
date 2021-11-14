@@ -28,7 +28,7 @@ good-names = [
     'i',
     'j',
     'k',
-    'StudyCalculation',
+    'MpetrunCalculation',
 ]
 
 [tool.pytest.ini_options]

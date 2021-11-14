@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""Pre-commit script to ensure that version numbers in `setup.json` and `aiida_dakota/__init__.py` match."""
+"""Pre-commit script to ensure that version numbers in `setup.json` and `aiida_mpet/__init__.py` match."""
 import os
 import json
 import sys
@@ -28,17 +28,17 @@ def cli():
 
 @cli.command('version')
 def validate_version():
-    """Check that version numbers in `setup.json` and `aiida_dakota/__init__.py` match."""
+    """Check that version numbers in `setup.json` and `aiida_mpet/__init__.py` match."""
     sys.path.insert(0, FILEPATH_ROOT)
-    import aiida_dakota  # pylint: disable=wrong-import-position
-    version = aiida_dakota.__version__
+    import aiida_mpet  # pylint: disable=wrong-import-position
+    version = aiida_mpet.__version__
 
     setup_content = get_setup_json()
 
     if version != setup_content['version']:
         click.echo('Version number mismatch detected:')
         click.echo(f"Version number in '{FILENAME_SETUP_JSON}': {setup_content['version']}")
-        click.echo(f"Version number in 'aiida_dakota/__init__.py': {version}")
+        click.echo(f"Version number in 'aiida_mpet/__init__.py': {version}")
         click.echo(f"Updating version in '{FILENAME_SETUP_JSON}' to: {version}")
 
         setup_content['version'] = version

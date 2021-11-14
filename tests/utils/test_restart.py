@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-"""Unit tests for the :py:mod:`~aiida_dakota.utils.restart` module."""
+"""Unit tests for the :py:mod:`~aiida_mpet.utils.restart` module."""
 import pytest
 
 from aiida.engine import ProcessBuilder
-from aiida_dakota.utils import restart
+from aiida_mpet.utils import restart
 
 
 def generate_inputs():
@@ -11,9 +11,9 @@ def generate_inputs():
     from aiida import orm
     return {'parameters': orm.Dict(dict={}), 'settings': orm.Dict(dict={})}
 
-def test_restart_study(fixture_localhost, generate_calc_job_node):
-    """Test the `get_builder_restart` for a completed `StudyCalculation`."""
-    entry_point_calc_job = 'dakota.study'
+def test_restart_mpetrun(fixture_localhost, generate_calc_job_node):
+    """Test the `get_builder_restart` for a completed `MpetrunCalculation`."""
+    entry_point_calc_job = 'mpet.mpetrun'
     node = generate_calc_job_node(entry_point_calc_job, fixture_localhost, 'default', generate_inputs())
 
     builder = restart.get_builder_restart(node)

@@ -5,7 +5,7 @@ import pytest
 
 
 def mock_launch_process(*_, **__):
-    """Mock the :meth:`~aiida_dakota.cli.utilslaunch.launch_process` to be a no-op."""
+    """Mock the :meth:`~aiida_mpet.cli.utilslaunch.launch_process` to be a no-op."""
     return
 
 
@@ -56,7 +56,7 @@ def run_cli_process_launch_command(run_cli_command, monkeypatch):
 
     def _inner(command, options=None, raises=None):
         """Run the command and check the result."""
-        from aiida_dakota.cli.utils import launch
+        from aiida_mpet.cli.utils import launch
         monkeypatch.setattr(launch, 'launch_process', mock_launch_process)
         return run_cli_command(command, options, raises)
 

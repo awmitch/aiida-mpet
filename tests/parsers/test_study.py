@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # pylint: disable=invalid-name,redefined-outer-name
-"""Tests for the `StudyParser`."""
+"""Tests for the `MpetrunParser`."""
 import pytest
 
 from aiida import orm
@@ -24,14 +24,14 @@ def generate_inputs(generate_structure):
     return _generate_inputs
 
 
-def test_study_default(fixture_localhost, generate_calc_job_node, generate_parser, generate_inputs, data_regression):
-    """Test a `dakota` calculation.
+def test_mpetrun_default(fixture_localhost, generate_calc_job_node, generate_parser, generate_inputs, data_regression):
+    """Test a `mpet` calculation.
 
-    The output is created by running a dead simple study.
+    The output is created by running a dead simple mpetrun.
     """
     name = 'default'
-    entry_point_calc_job = 'dakota.study'
-    entry_point_parser = 'dakota.study'
+    entry_point_calc_job = 'mpet.mpetrun'
+    entry_point_parser = 'mpet.mpetrun'
 
     node = generate_calc_job_node(entry_point_calc_job, fixture_localhost, name, generate_inputs())
     parser = generate_parser(entry_point_parser)

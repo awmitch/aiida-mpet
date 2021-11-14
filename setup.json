@@ -10,22 +10,22 @@
         "Programming Language :: Python :: 3.9",
         "Development Status :: 5 - Production/Stable"
     ],
-    "description": "The unofficial AiiDA plugin for Dakota",
+    "description": "The unofficial AiiDA plugin for Mpet",
     "entry_points": {
         "aiida.calculations": [
-            "dakota.study = aiida_dakota.calculations.study:StudyCalculation"
+            "mpet.mpetrun = aiida_mpet.calculations.mpetrun:MpetrunCalculation"
         ],
         "aiida.parsers": [
-            "dakota.study = aiida_dakota.parsers.study:StudyParser"
+            "mpet.mpetrun = aiida_mpet.parsers.mpetrun:MpetrunParser"
         ],
         "aiida.tools.calculations": [
-            "dakota.study = aiida_dakota.tools.calculations.study:StudyCalculationTools"
+            "mpet.mpetrun = aiida_mpet.tools.calculations.mpetrun:MpetrunCalculationTools"
         ],
         "aiida.workflows": [
-            "dakota.study.base = aiida_dakota.workflows.study.base:StudyBaseWorkChain"
+            "mpet.mpetrun.base = aiida_mpet.workflows.mpetrun.base:MpetrunBaseWorkChain"
         ],
         "console_scripts": [
-            "aiida-dakota = aiida_dakota.cli:cmd_root"
+            "aiida-mpet = aiida_mpet.cli:cmd_root"
         ]
     },
     "extras_require": {
@@ -48,17 +48,15 @@
     },
     "install_requires": [
         "psycopg2-binary<2.9",
-        "aiida_core[atomic_tools]~=1.4,>=1.4.4",
         "jsonschema",
         "packaging",
-        "qe-tools~=2.0rc1",
         "xmlschema~=1.2,>=1.2.5",
         "numpy",
         "importlib_resources"
     ],
     "license": "MIT License",
-    "name": "aiida_dakota",
+    "name": "aiida_mpet",
     "python_requires": ">=3.6",
-    "url": "https://github.com/awmitch/aiida-dakota",
+    "url": "https://github.com/awmitch/aiida-mpet",
     "version": "0.0.1"
 }

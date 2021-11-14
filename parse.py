@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""`Parser` implementation for the `StudyCalculation` calculation job class."""
+"""`Parser` implementation for the `MpetrunCalculation` calculation job class."""
 import traceback
 
 import numpy
@@ -7,16 +7,16 @@ import numpy
 from aiida import orm
 from aiida.common import exceptions
 
-from aiida_dakota.utils.mapping import get_logging_container
+from aiida_mpet.utils.mapping import get_logging_container
 from .base import Parser
-from .parse_raw.study import reduce_symmetries
+from .parse_raw.mpetrun import reduce_symmetries
 
 
-class StudyParser(Parser):
-    """`Parser` implementation for the `StudyCalculation` calculation job class."""
+class MpetrunParser(Parser):
+    """`Parser` implementation for the `MpetrunCalculation` calculation job class."""
 
     def parse(self, **kwargs):
-        """Parse the retrieved files of a completed `StudyCalculation` into output nodes.
+        """Parse the retrieved files of a completed `MpetrunCalculation` into output nodes.
 
         Two nodes that are expected are the default 'retrieved' `FolderData` node which will store the retrieved files
         permanently in the repository. The second required node is a filepath under the key `retrieved_temporary_files`
@@ -137,7 +137,7 @@ class StudyParser(Parser):
         :param parsed_xml: the raw parsed data from the XML output
         :return: tuple of two dictionaries, first with raw parsed data and second with log messages
         """
-        from aiida_dakota.parsers.parse_raw.study import parse_stdout
+        from aiida_mpet.parsers.parse_raw.mpetrun import parse_stdout
 
         logs = get_logging_container()
         parsed_data = {}
@@ -200,7 +200,7 @@ class StudyParser(Parser):
 
 
     def parse_xml_file(xml_file):
-        """Parse the content of XML output file written by `study.x` and `cp.x` with the new schema-based XML format.
+        """Parse the content of XML output file written by `mpetrun.x` and `cp.x` with the new schema-based XML format.
 
         :param xml: parsed XML
         :returns: tuple of two dictionaries, with the parsed data and log messages, respectively
@@ -462,7 +462,7 @@ class StudyParser(Parser):
             elif num_bands_up is None or num_bands_down is None:
                 raise XMLParseError('Only one of `nbnd_up` and `nbnd_dw` could be parsed')
 
-            # Here it is a spin-polarized calculation, where for study.x the number of bands in each channel should be identical.
+            # Here it is a spin-polarized calculation, where for mpetrun.x the number of bands in each channel should be identical.
             else:
                 spins = True
                 if num_bands_up != num_bands_down:
@@ -564,7 +564,7 @@ class StudyParser(Parser):
         if 'boundary_conditions' in outputs and 'assume_isolated' in outputs['boundary_conditions']:
             xml_data['assume_isolated'] = outputs['boundary_conditions']['assume_isolated']
 
-        # This is not printed by DAKOTA 6.3, but will be re-added before the next version
+        # This is not printed by MPET 6.3, but will be re-added before the next version
         if 'real_space_beta' in outputs['algorithmic_info']:
             xml_data['beta_real_space'] = outputs['algorithmic_info']['real_space_beta']
 
@@ -596,7 +596,7 @@ class StudyParser(Parser):
             # 0 = convergence reached;
             # -1 = SCF convergence failed;
             # 3 = ionic convergence failed
-            # These might be changed in the future. Also see PW/src/run_studyscf.f90
+            # These might be changed in the future. Also see PW/src/run_mpetrunscf.f90
 
         try:
             berry_phase = outputs['electric_field']['BerryPhase']

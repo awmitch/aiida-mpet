@@ -28,7 +28,7 @@ repos:
     -   id: pydocstyle
         exclude: &exclude_files >
             (?x)^(
-                aiida_dakota/parsers/.*|
+                aiida_mpet/parsers/.*|
                 docs/.*|
                 tests/.*(?<!\.py)$
             )$
@@ -60,7 +60,7 @@ repos:
         files: >-
             (?x)^(
                 setup.json|
-                aiida_dakota/__init__.py|
+                aiida_mpet/__init__.py|
                 ./utils/validate_version_number.py|
             )$
         pass_filenames: false

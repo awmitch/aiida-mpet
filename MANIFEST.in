@@ -1,5 +1,5 @@
 include setup.json
 include LICENSE.txt
-include aiida_dakota/utils/protocols/*.json
-recursive-include aiida_dakota/parsers/parse_xml *.xsd
-recursive-include aiida_dakota/workflows/protocols *.yaml
+include aiida_mpet/utils/protocols/*.json
+recursive-include aiida_mpet/parsers/parse_xml *.xsd
+recursive-include aiida_mpet/workflows/protocols *.yaml

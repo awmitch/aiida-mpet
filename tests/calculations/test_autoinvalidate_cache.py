@@ -7,8 +7,8 @@ from aiida.engine import CalcJob
 from aiida.plugins import CalculationFactory
 from aiida.plugins.entry_point import get_entry_point_names
 
-DAKOTA_CALC_ENTRY_POINT_NAMES = [
-    ep_name for ep_name in get_entry_point_names(group='aiida.calculations') if ep_name.startswith('dakota')
+MPET_CALC_ENTRY_POINT_NAMES = [
+    ep_name for ep_name in get_entry_point_names(group='aiida.calculations') if ep_name.startswith('mpet')
 ]
 
 # When explicitly overriden 'invalidates_cache' are added, add entries
@@ -17,7 +17,7 @@ DAKOTA_CALC_ENTRY_POINT_NAMES = [
 EXPLICIT_OVERRIDES = {}
 
 
-@pytest.mark.parametrize('entry_point_name', DAKOTA_CALC_ENTRY_POINT_NAMES)
+@pytest.mark.parametrize('entry_point_name', MPET_CALC_ENTRY_POINT_NAMES)
 def test_exit_code_invalidates_cache(entry_point_name):
     """Test automatic 'invalidates_cache' attribute of exit codes.
 

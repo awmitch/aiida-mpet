@@ -1,18 +1,18 @@
 # -*- coding: utf-8 -*-
-"""Tests for immigrating `StudyCalculation`s."""
+"""Tests for immigrating `MpetrunCalculation`s."""
 import os
 
 import numpy as np
 
-from aiida_dakota.tools.studyinputparser import create_builder_from_file
+from aiida_mpet.tools.mpetruninputparser import create_builder_from_file
 
 
 def test_create_builder(fixture_sandbox, fixture_code, generate_calc_job, filepath_tests):
-    """Test the `create_builder_from_file` method that parses an existing `dakota` folder into a process builder.
+    """Test the `create_builder_from_file` method that parses an existing `mpet` folder into a process builder.
 
-    The input file used is the one generated for `tests.calculations.test_study.test_study_default`.
+    The input file used is the one generated for `tests.calculations.test_mpetrun.test_mpetrun_default`.
     """
-    entry_point_name = 'dakota.study'
+    entry_point_name = 'mpet.mpetrun'
     code = fixture_code(entry_point_name)
 
     metadata = {
@@ -27,9 +27,9 @@ def test_create_builder(fixture_sandbox, fixture_code, generate_calc_job, filepa
         }
     }
 
-    in_folderpath = os.path.join(filepath_tests, 'calculations', 'test_study')
+    in_folderpath = os.path.join(filepath_tests, 'calculations', 'test_mpetrun')
 
-    builder = create_builder_from_file(in_folderpath, 'test_study_default.in', code, metadata)
+    builder = create_builder_from_file(in_folderpath, 'test_mpetrun_default.in', code, metadata)
 
     # In certain versions of `aiida-core` the builder comes with the `stash` namespace by default.
     builder['metadata']['options'].pop('stash', None)

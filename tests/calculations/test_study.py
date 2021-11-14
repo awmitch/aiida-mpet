@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Tests for the `StudyCalculation` class."""
+"""Tests for the `MpetrunCalculation` class."""
 
 import pytest
 
@@ -7,15 +7,15 @@ from aiida import orm
 from aiida.common import datastructures
 from aiida.common.warnings import AiidaDeprecationWarning
 from aiida.common.exceptions import InputValidationError
-from aiida_dakota.utils.resources import get_default_options
-from aiida_dakota.calculations.helpers import DakotaInputValidationError
+from aiida_mpet.utils.resources import get_default_options
+from aiida_mpet.calculations.helpers import MpetInputValidationError
 
 
-def test_study_default(fixture_sandbox, generate_calc_job, generate_inputs_study, file_regression):
-    """Test a default `StudyCalculation`."""
-    entry_point_name = 'dakota.study'
+def test_mpetrun_default(fixture_sandbox, generate_calc_job, generate_inputs_mpetrun, file_regression):
+    """Test a default `MpetrunCalculation`."""
+    entry_point_name = 'mpet.mpetrun'
 
-    inputs = generate_inputs_study()
+    inputs = generate_inputs_mpetrun()
     calc_info = generate_calc_job(fixture_sandbox, entry_point_name, inputs)
 
     cmdline_params = ['-in', 'aiida.in']
