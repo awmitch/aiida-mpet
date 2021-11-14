@@ -1,2 +1,2 @@
-# aiida-dakota
-AiiDA plugin for Dakota
+# aiida-mpet
+AiiDA plugin for MPET
