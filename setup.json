@@ -1,0 +1,62 @@
+{
+    "author": "Alec Mitchell",
+    "author_email": "alecwmitchell@gmail.com",
+    "classifiers": [
+        "Framework :: AiiDA",
+        "License :: OSI Approved :: MIT License",
+        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Development Status :: 5 - Production/Stable"
+    ],
+    "description": "The unofficial AiiDA plugin for Mpet",
+    "entry_points": {
+        "aiida.calculations": [
+            "mpet.mpetrun = aiida_mpet.calculations.mpetrun:MpetrunCalculation"
+        ],
+        "aiida.parsers": [
+            "mpet.mpetrun = aiida_mpet.parsers.mpetrun:MpetrunParser"
+        ],
+        "aiida.tools.calculations": [
+            "mpet.mpetrun = aiida_mpet.tools.calculations.mpetrun:MpetrunCalculationTools"
+        ],
+        "aiida.workflows": [
+            "mpet.mpetrun.base = aiida_mpet.workflows.mpetrun.base:MpetrunBaseWorkChain"
+        ],
+        "console_scripts": [
+            "aiida-mpet = aiida_mpet.cli:cmd_root"
+        ]
+    },
+    "extras_require": {
+        "pre-commit": [
+            "pre-commit~=2.2",
+            "pylint~=2.6.0"
+        ],
+        "tests": [
+            "pgtest~=1.3",
+            "pytest~=6.0",
+            "pytest-regressions~=1.0"
+        ],
+        "docs": [
+            "Sphinx",
+            "docutils",
+            "sphinx-copybutton~=0.3.0",
+            "sphinx-book-theme~=0.1.0",
+            "sphinx-click~=2.7.1"
+        ]
+    },
+    "install_requires": [
+        "psycopg2-binary<2.9",
+        "jsonschema",
+        "packaging",
+        "xmlschema~=1.2,>=1.2.5",
+        "numpy",
+        "importlib_resources"
+    ],
+    "license": "MIT License",
+    "name": "aiida_mpet",
+    "python_requires": ">=3.6",
+    "url": "https://github.com/awmitch/aiida-mpet",
+    "version": "0.0.1"
+}

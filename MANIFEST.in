@@ -1,0 +1,5 @@
+include setup.json
+include LICENSE.txt
+include aiida_mpet/utils/protocols/*.json
+recursive-include aiida_mpet/parsers/parse_xml *.xsd
+recursive-include aiida_mpet/workflows/protocols *.yaml
